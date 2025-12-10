@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typography Canvas - 16:9 Image Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link id="googleFonts" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Inter:wght@300;400;600;700;900&family=Roboto:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Montserrat:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Open+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Oswald:wght@300;400;700&family=Raleway:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Poppins:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Ubuntu:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Nunito:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Work+Sans:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=DM+Sans:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Sans+Pro:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Crimson+Text:ital,wght@0,400;0,700;1,400;1,700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;700&family=Bebas+Neue&family=Anton&family=Archivo:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+```
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+    
+    .canvas-container {
+        aspect-ratio: 16/9;
+        background: #ffffff;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    
+    .control-panel {
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        background: transparent;
+        cursor: pointer;
+        width: 100%;
+    }
+    
+    input[type="range"]::-webkit-slider-track {
+        background: #e2e8f0;
+        height: 6px;
+        border-radius: 3px;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        background: #6366f1;
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        margin-top: -7px;
+    }
+    
+    input[type="color"] {
+        border: none;
+        width: 50px;
+        height: 50px;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .toggle-switch {
+        position: relative;
+        width: 48px;
+        height: 26px;
+        background: #cbd5e1;
+        border-radius: 13px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .toggle-switch.active {
+        background: #6366f1;
+    }
+    
+    .toggle-switch::after {
+        content: '';
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: white;
+        top: 2px;
+        left: 2px;
+        transition: transform 0.3s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .toggle-switch.active::after {
+        transform: translateX(22px);
+    }
+    
+    .control-section {
+        transition: all 0.3s ease;
+    }
+    
+    .control-section:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-in {
+        animation: slideIn 0.5s ease forwards;
+    }
+</style>
+```
+
+</head>
+<body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="text-center mb-8 animate-in">
+            <h1 class="text-5xl font-bold text-white mb-2" style="font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px;">
+                TYPOGRAPHY CANVAS
+            </h1>
+            <p class="text-white/80 text-lg">Create stunning 16:9 images with perfect text alignment</p>
+        </div>
+
+```
+    <div class="grid lg:grid-cols-3 gap-8">
+        <!-- Canvas Preview -->
+        <div class="lg:col-span-2 animate-in" style="animation-delay: 0.1s;">
+            <div class="canvas-container rounded-2xl overflow-hidden">
+                <canvas id="canvas" width="1920" height="1080"></canvas>
+            </div>
+            <button id="downloadBtn" class="mt-6 w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-8 rounded-xl font-semibold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg">
+                Download Image
+            </button>
+        </div>
+        
+        <!-- Controls Panel -->
+        <div class="space-y-4 animate-in" style="animation-delay: 0.2s;">
+            <!-- Text Input -->
+            <div class="control-panel rounded-xl p-6 control-section">
+                <h3 class="font-bold text-gray-800 mb-4 text-lg">Content</h3>
+                <div class="space-y-3">
+                    <input type="text" id="titleInput" placeholder="Enter title..." 
+                           class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition">
+                    <textarea id="descInput" placeholder="Enter description..." 
+                              class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition h-24 resize-none"></textarea>
+                </div>
+            </div>
+            
+            <!-- Title Settings -->
+            <div class="control-panel rounded-xl p-6 control-section">
+                <h3 class="font-bold text-gray-800 mb-4 text-lg">Title Settings</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-sm text-gray-600 mb-1 block">Font Family</label>
+                        <select id="titleFont" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition">
+                            <option value="Playfair Display">Playfair Display</option>
+                            <option value="Bebas Neue">Bebas Neue</option>
+                            <option value="Anton">Anton</option>
+                            <option value="Montserrat">Montserrat</option>
+                            <option value="Oswald">Oswald</option>
+                            <option value="Raleway">Raleway</option>
+                            <option value="Poppins">Poppins</option>
+                            <option value="Merriweather">Merriweather</option>
+                            <option value="Crimson Text">Crimson Text</option>
+                            <option value="Libre Baskerville">Libre Baskerville</option>
+                            <option value="Space Grotesk">Space Grotesk</option>
+                            <option value="DM Sans">DM Sans</option>
+                            <option value="Archivo">Archivo</option>
+                            <option value="Work Sans">Work Sans</option>
+                            <option value="Inter">Inter</option>
+                            <option value="Roboto">Roboto</option>
+                            <option value="Open Sans">Open Sans</option>
+                            <option value="Lato">Lato</option>
+                            <option value="Ubuntu">Ubuntu</option>
+                            <option value="Nunito">Nunito</option>
+                            <option value="PT Sans">PT Sans</option>
+                            <option value="Source Sans Pro">Source Sans Pro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-600 mb-1 block">Size</label>
+                        <input type="range" id="titleSize" min="20" max="200" value="80">
+                        <span id="titleSizeValue" class="text-xs text-gray-500">80px</span>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-600 mb-1 block">Line Height</label>
+                        <input type="range" id="titleLineHeight" min="0.8" max="2" step="0.1" value="1.1">
+                        <span id="titleLineHeightValue" class="text-xs text-gray-500">1.1</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-sm text-gray-600 mb-2 block">Color</label>
+                            <input type="color" id="titleColor" value="#1f2937">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm text-gray-600">Bold</label>
+                                <div class="toggle-switch" id="titleBold"></div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm text-gray-600">Italic</label>
+                                <div class="toggle-switch" id="titleItalic"></div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm text-gray-600">Wrap</label>
+                                <div class="toggle-switch active" id="titleWrap"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Description Settings -->
+            <div class="control-panel rounded-xl p-6 control-section">
+                <h3 class="font-bold text-gray-800 mb-4 text-lg">Description Settings</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-sm text-gray-600 mb-1 block">Font Family</label>
+                        <select id="descFont" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition">
+                            <option value="Inter">Inter</option>
+                            <option value="Roboto">Roboto</option>
+                            <option value="Open Sans">Open Sans</option>
+                            <option value="Lato">Lato</option>
+                            <option value="Montserrat">Montserrat</option>
+                            <option value="Raleway">Raleway</option>
+                            <option value="Poppins">Poppins</option>
+                            <option value="Ubuntu">Ubuntu</option>
+                            <option value="Nunito">Nunito</option>
+                            <option value="PT Sans">PT Sans</option>
+                            <option value="Work Sans">Work Sans</option>
+                            <option value="DM Sans">DM Sans</option>
+                            <option value="Source Sans Pro">Source Sans Pro</option>
+                            <option value="Archivo">Archivo</option>
+                            <option value="Space Grotesk">Space Grotesk</option>
+                            <option value="Playfair Display">Playfair Display</option>
+                            <option value="Merriweather">Merriweather</option>
+                            <option value="Crimson Text">Crimson Text</option>
+                            <option value="Libre Baskerville">Libre Baskerville</option>
+                            <option value="Bebas Neue">Bebas Neue</option>
+                            <option value="Anton">Anton</option>
+                            <option value="Oswald">Oswald</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-600 mb-1 block">Size</label>
+                        <input type="range" id="descSize" min="10" max="100" value="32">
+                        <span id="descSizeValue" class="text-xs text-gray-500">32px</span>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-600 mb-1 block">Line Height</label>
+                        <input type="range" id="descLineHeight" min="0.8" max="2" step="0.1" value="1.2">
+                        <span id="descLineHeightValue" class="text-xs text-gray-500">1.2</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-sm text-gray-600 mb-2 block">Color</label>
+                            <input type="color" id="descColor" value="#6b7280">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm text-gray-600">Bold</label>
+                                <div class="toggle-switch" id="descBold"></div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm text-gray-600">Italic</label>
+                                <div class="toggle-switch" id="descItalic"></div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm text-gray-600">Wrap</label>
+                                <div class="toggle-switch active" id="descWrap"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Layout Settings -->
+            <div class="control-panel rounded-xl p-6 control-section">
+                <h3 class="font-bold text-gray-800 mb-4 text-lg">Layout</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-sm text-gray-600 mb-1 block">Gap Between Texts</label>
+                        <input type="range" id="textGap" min="0" max="100" value="30">
+                        <span id="gapValue" class="text-xs text-gray-500">30px</span>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-600 mb-2 block">Background</label>
+                        <input type="color" id="bgColor" value="#ffffff" class="w-full">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Custom Font Settings -->
+            <div class="control-panel rounded-xl p-6 control-section">
+                <h3 class="font-bold text-gray-800 mb-4 text-lg">Custom Google Font</h3>
+                <div class="space-y-3">
+                    <input type="text" id="customFontInput" placeholder="Enter font name (e.g., Bungee Shade)" 
+                           class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition text-sm">
+                    <button id="loadCustomFont" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-indigo-700 transition">
+                        Load Font
+                    </button>
+                    <p class="text-xs text-gray-500">Enter any Google Font name to add it to the dropdowns</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Input elements
+    const titleInput = document.getElementById('titleInput');
+    const descInput = document.getElementById('descInput');
+    const titleSize = document.getElementById('titleSize');
+    const descSize = document.getElementById('descSize');
+    const titleColor = document.getElementById('titleColor');
+    const descColor = document.getElementById('descColor');
+    const bgColor = document.getElementById('bgColor');
+    const textGap = document.getElementById('textGap');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const titleFont = document.getElementById('titleFont');
+    const descFont = document.getElementById('descFont');
+    const titleLineHeight = document.getElementById('titleLineHeight');
+    const descLineHeight = document.getElementById('descLineHeight');
+    
+    // Toggle switches
+    const toggles = {
+        titleBold: document.getElementById('titleBold'),
+        titleItalic: document.getElementById('titleItalic'),
+        titleWrap: document.getElementById('titleWrap'),
+        descBold: document.getElementById('descBold'),
+        descItalic: document.getElementById('descItalic'),
+        descWrap: document.getElementById('descWrap')
+    };
+    
+    // Set initial values
+    titleInput.value = "Your Amazing Title";
+    descInput.value = "Add your description here. This text will be perfectly centered and styled according to your preferences.";
+    
+    // Toggle switch functionality
+    Object.values(toggles).forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            renderCanvas();
+        });
+    });
+    
+    // Update value displays
+    titleSize.addEventListener('input', (e) => {
+        document.getElementById('titleSizeValue').textContent = e.target.value + 'px';
+        renderCanvas();
+    });
+    
+    descSize.addEventListener('input', (e) => {
+        document.getElementById('descSizeValue').textContent = e.target.value + 'px';
+        renderCanvas();
+    });
+    
+    titleLineHeight.addEventListener('input', (e) => {
+        document.getElementById('titleLineHeightValue').textContent = e.target.value;
+        renderCanvas();
+    });
+    
+    descLineHeight.addEventListener('input', (e) => {
+        document.getElementById('descLineHeightValue').textContent = e.target.value;
+        renderCanvas();
+    });
+    
+    textGap.addEventListener('input', (e) => {
+        document.getElementById('gapValue').textContent = e.target.value + 'px';
+        renderCanvas();
+    });
+    
+    // Add event listeners for real-time updates
+    [titleInput, descInput, titleColor, descColor, bgColor, titleFont, descFont].forEach(input => {
+        input.addEventListener('input', renderCanvas);
+    });
+    
+    // Add change event for font selects
+    [titleFont, descFont].forEach(select => {
+        select.addEventListener('change', renderCanvas);
+    });
+    
+    function wrapText(text, maxWidth, fontSize, fontString, ctx) {
+        ctx.font = fontString;
+        const words = text.split(' ');
+        const lines = [];
+        let currentLine = '';
+        
+        for (let word of words) {
+            const testLine = currentLine + (currentLine ? ' ' : '') + word;
+            const metrics = ctx.measureText(testLine);
+            
+            if (metrics.width > maxWidth && currentLine) {
+                lines.push(currentLine);
+                currentLine = word;
+            } else {
+                currentLine = testLine;
+            }
+        }
+        
+        if (currentLine) {
+            lines.push(currentLine);
+        }
+        
+        return lines;
+    }
+    
+    function renderCanvas() {
+        // Clear canvas
+        ctx.fillStyle = bgColor.value;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        const padding = 100;
+        const maxWidth = canvas.width - (padding * 2);
+        
+        // Title settings
+        const titleFontSize = parseInt(titleSize.value);
+        const titleBold = toggles.titleBold.classList.contains('active') ? '700' : '400';
+        const titleItalic = toggles.titleItalic.classList.contains('active') ? 'italic' : 'normal';
+        const titleWrapEnabled = toggles.titleWrap.classList.contains('active');
+        const titleFontFamily = titleFont.value;
+        const titleLH = parseFloat(titleLineHeight.value);
+        
+        // Description settings
+        const descFontSize = parseInt(descSize.value);
+        const descBold = toggles.descBold.classList.contains('active') ? '700' : '400';
+        const descItalic = toggles.descItalic.classList.contains('active') ? 'italic' : 'normal';
+        const descWrapEnabled = toggles.descWrap.classList.contains('active');
+        const descFontFamily = descFont.value;
+        const descLH = parseFloat(descLineHeight.value);
+        
+        const gap = parseInt(textGap.value);
+        
+        // Build font strings
+        const titleFontString = `${titleItalic} ${titleBold} ${titleFontSize}px "${titleFontFamily}", sans-serif`;
+        const descFontString = `${descItalic} ${descBold} ${descFontSize}px "${descFontFamily}", sans-serif`;
+        
+        // Set title font for measuring
+        ctx.font = titleFontString;
+        ctx.fillStyle = titleColor.value;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        // Get title lines
+        let titleLines = [titleInput.value];
+        if (titleWrapEnabled && titleInput.value) {
+            titleLines = wrapText(titleInput.value, maxWidth, titleFontSize, titleFontString, ctx);
+        }
+        
+        // Get description lines
+        let descLines = [descInput.value];
+        if (descWrapEnabled && descInput.value) {
+            descLines = wrapText(descInput.value, maxWidth, descFontSize, descFontString, ctx);
+        }
+        
+        // Calculate total height with proper line heights
+        const titleLineSpacing = titleFontSize * titleLH;
+        const descLineSpacing = descFontSize * descLH;
+        const titleHeight = titleLines.length * titleLineSpacing;
+        const descHeight = descLines.length * descLineSpacing;
+        const totalHeight = titleHeight + gap + descHeight;
+        
+        // Calculate starting Y position to center everything
+        let startY = (canvas.height - totalHeight) / 2 + (titleLineSpacing / 2);
+        
+        // Draw title
+        ctx.font = titleFontString;
+        ctx.fillStyle = titleColor.value;
+        titleLines.forEach((line, index) => {
+            const y = startY + (index * titleLineSpacing);
+            ctx.fillText(line, canvas.width / 2, y);
+        });
+        
+        // Draw description
+        ctx.font = descFontString;
+        ctx.fillStyle = descColor.value;
+        const descStartY = startY + titleHeight - (titleLineSpacing / 2) + gap + (descLineSpacing / 2);
+        descLines.forEach((line, index) => {
+            const y = descStartY + (index * descLineSpacing);
+            ctx.fillText(line, canvas.width / 2, y);
+        });
+    }
+    
+    // Download functionality
+    downloadBtn.addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.download = 'typography-canvas-16x9.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
+    
+    // Custom font loading
+    document.getElementById('loadCustomFont').addEventListener('click', () => {
+        const fontName = document.getElementById('customFontInput').value.trim();
+        if (!fontName) return;
+        
+        // Format font name for Google Fonts URL
+        const formattedName = fontName.replace(/ /g, '+');
+        const fontUrl = `https://fonts.googleapis.com/css2?family=${formattedName}:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap`;
+        
+        // Create and append link element
+        const link = document.createElement('link');
+        link.href = fontUrl;
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+        
+        // Wait a moment for font to load, then add to dropdowns
+        setTimeout(() => {
+            // Check if font already exists in dropdowns
+            const titleOptions = Array.from(titleFont.options).map(o => o.value);
+            if (!titleOptions.includes(fontName)) {
+                // Add to both dropdowns
+                const titleOption = new Option(fontName, fontName);
+                const descOption = new Option(fontName, fontName);
+                titleFont.appendChild(titleOption);
+                descFont.appendChild(descOption);
+                
+                // Select the new font in title dropdown
+                titleFont.value = fontName;
+                renderCanvas();
+                
+                // Clear input
+                document.getElementById('customFontInput').value = '';
+                
+                // Visual feedback
+                const button = document.getElementById('loadCustomFont');
+                const originalText = button.textContent;
+                button.textContent = 'Font Loaded!';
+                button.classList.add('bg-green-600', 'hover:bg-green-700');
+                button.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('bg-green-600', 'hover:bg-green-700');
+                    button.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+                }, 2000);
+            } else {
+                alert('This font is already loaded!');
+            }
+        }, 500);
+    });
+    
+    // Allow pressing Enter to load custom font
+    document.getElementById('customFontInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            document.getElementById('loadCustomFont').click();
+        }
+    });
+    
+    // Responsive canvas
+    function resizeCanvas() {
+        const container = canvas.parentElement;
+        const containerWidth = container.clientWidth;
+        canvas.style.width = containerWidth + 'px';
+        canvas.style.height = (containerWidth * 9 / 16) + 'px';
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    
+    // Initial render
+    resizeCanvas();
+    renderCanvas();
+</script>
+```
+
+</body>
+</html>
