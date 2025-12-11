@@ -3,18 +3,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Typography Canvas - 16:9 Image Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link id="googleFonts" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Inter:wght@300;400;600;700;900&family=Roboto:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Montserrat:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Open+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Oswald:wght@300;400;700&family=Raleway:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Poppins:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Ubuntu:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Nunito:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Work+Sans:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=DM+Sans:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Sans+Pro:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Crimson+Text:ital,wght@0,400;0,700;1,400;1,700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;700&family=Bebas+Neue&family=Anton&family=Archivo:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+        }
 
 ```
     body {
         font-family: 'Inter', sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
+        overflow-x: hidden;
     }
     
     .canvas-container {
@@ -27,6 +33,32 @@
         backdrop-filter: blur(10px);
         background: rgba(255, 255, 255, 0.95);
         border: 1px solid rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .panel-header {
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+    
+    .panel-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+    
+    .panel-content.active {
+        max-height: 1000px;
+    }
+    
+    .chevron {
+        transition: transform 0.3s ease;
+    }
+    
+    .chevron.rotate {
+        transform: rotate(180deg);
     }
     
     input[type="range"] {
@@ -35,24 +67,35 @@
         background: transparent;
         cursor: pointer;
         width: 100%;
+        touch-action: none;
     }
     
     input[type="range"]::-webkit-slider-track {
         background: #e2e8f0;
-        height: 6px;
-        border-radius: 3px;
+        height: 8px;
+        border-radius: 4px;
     }
     
     input[type="range"]::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
         background: #6366f1;
-        height: 20px;
-        width: 20px;
+        height: 28px;
+        width: 28px;
         border-radius: 50%;
         border: 3px solid white;
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        margin-top: -7px;
+        margin-top: -10px;
+    }
+    
+    input[type="range"]::-moz-range-thumb {
+        background: #6366f1;
+        height: 28px;
+        width: 28px;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        cursor: pointer;
     }
     
     input[type="color"] {
@@ -95,13 +138,56 @@
         transform: translateX(22px);
     }
     
-    .control-section {
-        transition: all 0.3s ease;
+    @media (min-width: 1024px) {
+        .control-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .panel-content {
+            max-height: 1000px !important;
+        }
+        
+        .chevron {
+            display: none;
+        }
     }
     
-    .control-section:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    @media (max-width: 1023px) {
+        input[type="range"]::-webkit-slider-thumb {
+            height: 32px;
+            width: 32px;
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            height: 32px;
+            width: 32px;
+        }
+        
+        .control-section:active {
+            transform: scale(0.98);
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .toggle-switch {
+            width: 54px;
+            height: 30px;
+        }
+        
+        .toggle-switch::after {
+            width: 26px;
+            height: 26px;
+        }
+        
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+        
+        input[type="color"] {
+            width: 60px;
+            height: 60px;
+        }
     }
     
     @keyframes slideIn {
@@ -112,103 +198,148 @@
     .animate-in {
         animation: slideIn 0.5s ease forwards;
     }
-</style>
+    
+    .mobile-tab {
+        scroll-snap-align: start;
+        flex-shrink: 0;
+    }
+    
+    .mobile-tabs-container {
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    @media (max-width: 640px) {
+        body {
+            background: #f3f4f6;
+        }
+        
+        .control-panel {
+            background: white;
+            backdrop-filter: none;
+        }
+    }
 ```
 
 </head>
 <body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
-    <div class="container mx-auto px-4 py-8 max-w-7xl">
+    <div class="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-7xl">
         <!-- Header -->
-        <div class="text-center mb-8 animate-in">
-            <h1 class="text-5xl font-bold text-white mb-2" style="font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px;">
+        <div class="text-center mb-4 sm:mb-8 animate-in">
+            <h1 class="text-3xl sm:text-5xl font-bold text-white mb-1 sm:mb-2" style="font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px;">
                 TYPOGRAPHY CANVAS
             </h1>
-            <p class="text-white/80 text-lg">Create stunning 16:9 images with perfect text alignment</p>
+            <p class="text-white/80 text-sm sm:text-lg px-4">Create stunning 16:9 images with perfect text alignment</p>
         </div>
 
 ```
-    <div class="grid lg:grid-cols-3 gap-8">
+    <!-- Mobile Tab Navigation -->
+    <div class="lg:hidden mb-4 bg-white/10 backdrop-blur-sm rounded-lg p-1 flex mobile-tabs-container overflow-x-auto">
+        <button class="tab-btn flex-1 min-w-[100px] px-3 py-2 rounded-md text-white font-medium text-sm transition active" data-tab="canvas">
+            Canvas
+        </button>
+        <button class="tab-btn flex-1 min-w-[100px] px-3 py-2 rounded-md text-white/70 font-medium text-sm transition" data-tab="controls">
+            Controls
+        </button>
+    </div>
+    
+    <div class="grid lg:grid-cols-3 gap-4 sm:gap-8">
         <!-- Canvas Preview -->
-        <div class="lg:col-span-2 animate-in" style="animation-delay: 0.1s;">
-            <div class="canvas-container rounded-2xl overflow-hidden">
+        <div id="canvas-section" class="lg:col-span-2 animate-in tab-content" style="animation-delay: 0.1s;">
+            <div class="canvas-container rounded-lg sm:rounded-2xl overflow-hidden">
                 <canvas id="canvas" width="1920" height="1080"></canvas>
             </div>
-            <button id="downloadBtn" class="mt-6 w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-8 rounded-xl font-semibold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg">
-                Download Image
+            <button id="downloadBtn" class="mt-3 sm:mt-6 w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 sm:py-4 px-6 sm:px-8 rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg active:scale-95">
+                <span class="inline-block sm:hidden">Download</span>
+                <span class="hidden sm:inline-block">Download Image</span>
             </button>
         </div>
         
         <!-- Controls Panel -->
-        <div class="space-y-4 animate-in" style="animation-delay: 0.2s;">
+        <div id="controls-section" class="space-y-3 sm:space-y-4 animate-in tab-content lg:block" style="animation-delay: 0.2s;">
             <!-- Text Input -->
-            <div class="control-panel rounded-xl p-6 control-section">
-                <h3 class="font-bold text-gray-800 mb-4 text-lg">Content</h3>
-                <div class="space-y-3">
-                    <input type="text" id="titleInput" placeholder="Enter title..." 
-                           class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition">
-                    <textarea id="descInput" placeholder="Enter description..." 
-                              class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition h-24 resize-none"></textarea>
+            <div class="control-panel rounded-lg sm:rounded-xl p-4 sm:p-6 control-section">
+                <div class="panel-header flex items-center justify-between" onclick="togglePanel(this)">
+                    <h3 class="font-bold text-gray-800 text-base sm:text-lg">Content</h3>
+                    <svg class="chevron rotate lg:hidden w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+                <div class="panel-content active mt-3 sm:mt-4">
+                    <div class="space-y-3">
+                        <input type="text" id="titleInput" placeholder="Enter title..." 
+                               class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition text-sm sm:text-base">
+                        <textarea id="descInput" placeholder="Enter description..." 
+                                  class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition h-20 sm:h-24 resize-none text-sm sm:text-base"></textarea>
+                    </div>
                 </div>
             </div>
             
             <!-- Title Settings -->
-            <div class="control-panel rounded-xl p-6 control-section">
-                <h3 class="font-bold text-gray-800 mb-4 text-lg">Title Settings</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-sm text-gray-600 mb-1 block">Font Family</label>
-                        <select id="titleFont" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition">
-                            <option value="Playfair Display">Playfair Display</option>
-                            <option value="Bebas Neue">Bebas Neue</option>
-                            <option value="Anton">Anton</option>
-                            <option value="Montserrat">Montserrat</option>
-                            <option value="Oswald">Oswald</option>
-                            <option value="Raleway">Raleway</option>
-                            <option value="Poppins">Poppins</option>
-                            <option value="Merriweather">Merriweather</option>
-                            <option value="Crimson Text">Crimson Text</option>
-                            <option value="Libre Baskerville">Libre Baskerville</option>
-                            <option value="Space Grotesk">Space Grotesk</option>
-                            <option value="DM Sans">DM Sans</option>
-                            <option value="Archivo">Archivo</option>
-                            <option value="Work Sans">Work Sans</option>
-                            <option value="Inter">Inter</option>
-                            <option value="Roboto">Roboto</option>
-                            <option value="Open Sans">Open Sans</option>
-                            <option value="Lato">Lato</option>
-                            <option value="Ubuntu">Ubuntu</option>
-                            <option value="Nunito">Nunito</option>
-                            <option value="PT Sans">PT Sans</option>
-                            <option value="Source Sans Pro">Source Sans Pro</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-600 mb-1 block">Size</label>
-                        <input type="range" id="titleSize" min="20" max="200" value="80">
-                        <span id="titleSizeValue" class="text-xs text-gray-500">80px</span>
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-600 mb-1 block">Line Height</label>
-                        <input type="range" id="titleLineHeight" min="0.8" max="2" step="0.1" value="1.1">
-                        <span id="titleLineHeightValue" class="text-xs text-gray-500">1.1</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
+            <div class="control-panel rounded-lg sm:rounded-xl p-4 sm:p-6 control-section">
+                <div class="panel-header flex items-center justify-between" onclick="togglePanel(this)">
+                    <h3 class="font-bold text-gray-800 text-base sm:text-lg">Title Settings</h3>
+                    <svg class="chevron lg:hidden w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+                <div class="panel-content mt-3 sm:mt-4">
+                    <div class="space-y-3 sm:space-y-4">
                         <div>
-                            <label class="text-sm text-gray-600 mb-2 block">Color</label>
-                            <input type="color" id="titleColor" value="#1f2937">
+                            <label class="text-xs sm:text-sm text-gray-600 mb-1 block">Font Family</label>
+                            <select id="titleFont" class="w-full px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition text-sm sm:text-base">
+                                <option value="Playfair Display">Playfair Display</option>
+                                <option value="Bebas Neue">Bebas Neue</option>
+                                <option value="Anton">Anton</option>
+                                <option value="Montserrat">Montserrat</option>
+                                <option value="Oswald">Oswald</option>
+                                <option value="Raleway">Raleway</option>
+                                <option value="Poppins">Poppins</option>
+                                <option value="Merriweather">Merriweather</option>
+                                <option value="Crimson Text">Crimson Text</option>
+                                <option value="Libre Baskerville">Libre Baskerville</option>
+                                <option value="Space Grotesk">Space Grotesk</option>
+                                <option value="DM Sans">DM Sans</option>
+                                <option value="Archivo">Archivo</option>
+                                <option value="Work Sans">Work Sans</option>
+                                <option value="Inter">Inter</option>
+                                <option value="Roboto">Roboto</option>
+                                <option value="Open Sans">Open Sans</option>
+                                <option value="Lato">Lato</option>
+                                <option value="Ubuntu">Ubuntu</option>
+                                <option value="Nunito">Nunito</option>
+                                <option value="PT Sans">PT Sans</option>
+                                <option value="Source Sans Pro">Source Sans Pro</option>
+                            </select>
                         </div>
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <label class="text-sm text-gray-600">Bold</label>
-                                <div class="toggle-switch" id="titleBold"></div>
+                        <div>
+                            <label class="text-xs sm:text-sm text-gray-600 mb-1 block">Size</label>
+                            <input type="range" id="titleSize" min="20" max="200" value="80">
+                            <span id="titleSizeValue" class="text-xs text-gray-500">80px</span>
+                        </div>
+                        <div>
+                            <label class="text-xs sm:text-sm text-gray-600 mb-1 block">Line Height</label>
+                            <input type="range" id="titleLineHeight" min="0.8" max="2" step="0.1" value="1.1">
+                            <span id="titleLineHeightValue" class="text-xs text-gray-500">1.1</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                            <div>
+                                <label class="text-xs sm:text-sm text-gray-600 mb-2 block">Color</label>
+                                <input type="color" id="titleColor" value="#1f2937">
                             </div>
-                            <div class="flex items-center justify-between">
-                                <label class="text-sm text-gray-600">Italic</label>
-                                <div class="toggle-switch" id="titleItalic"></div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <label class="text-sm text-gray-600">Wrap</label>
-                                <div class="toggle-switch active" id="titleWrap"></div>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-xs sm:text-sm text-gray-600">Bold</label>
+                                    <div class="toggle-switch" id="titleBold"></div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <label class="text-xs sm:text-sm text-gray-600">Italic</label>
+                                    <div class="toggle-switch" id="titleItalic"></div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <label class="text-xs sm:text-sm text-gray-600">Wrap</label>
+                                    <div class="toggle-switch active" id="titleWrap"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -216,63 +347,70 @@
             </div>
             
             <!-- Description Settings -->
-            <div class="control-panel rounded-xl p-6 control-section">
-                <h3 class="font-bold text-gray-800 mb-4 text-lg">Description Settings</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-sm text-gray-600 mb-1 block">Font Family</label>
-                        <select id="descFont" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition">
-                            <option value="Inter">Inter</option>
-                            <option value="Roboto">Roboto</option>
-                            <option value="Open Sans">Open Sans</option>
-                            <option value="Lato">Lato</option>
-                            <option value="Montserrat">Montserrat</option>
-                            <option value="Raleway">Raleway</option>
-                            <option value="Poppins">Poppins</option>
-                            <option value="Ubuntu">Ubuntu</option>
-                            <option value="Nunito">Nunito</option>
-                            <option value="PT Sans">PT Sans</option>
-                            <option value="Work Sans">Work Sans</option>
-                            <option value="DM Sans">DM Sans</option>
-                            <option value="Source Sans Pro">Source Sans Pro</option>
-                            <option value="Archivo">Archivo</option>
-                            <option value="Space Grotesk">Space Grotesk</option>
-                            <option value="Playfair Display">Playfair Display</option>
-                            <option value="Merriweather">Merriweather</option>
-                            <option value="Crimson Text">Crimson Text</option>
-                            <option value="Libre Baskerville">Libre Baskerville</option>
-                            <option value="Bebas Neue">Bebas Neue</option>
-                            <option value="Anton">Anton</option>
-                            <option value="Oswald">Oswald</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-600 mb-1 block">Size</label>
-                        <input type="range" id="descSize" min="10" max="100" value="32">
-                        <span id="descSizeValue" class="text-xs text-gray-500">32px</span>
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-600 mb-1 block">Line Height</label>
-                        <input type="range" id="descLineHeight" min="0.8" max="2" step="0.1" value="1.2">
-                        <span id="descLineHeightValue" class="text-xs text-gray-500">1.2</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
+            <div class="control-panel rounded-lg sm:rounded-xl p-4 sm:p-6 control-section">
+                <div class="panel-header flex items-center justify-between" onclick="togglePanel(this)">
+                    <h3 class="font-bold text-gray-800 text-base sm:text-lg">Description Settings</h3>
+                    <svg class="chevron lg:hidden w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+                <div class="panel-content mt-3 sm:mt-4">
+                    <div class="space-y-3 sm:space-y-4">
                         <div>
-                            <label class="text-sm text-gray-600 mb-2 block">Color</label>
-                            <input type="color" id="descColor" value="#6b7280">
+                            <label class="text-xs sm:text-sm text-gray-600 mb-1 block">Font Family</label>
+                            <select id="descFont" class="w-full px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition text-sm sm:text-base">
+                                <option value="Inter">Inter</option>
+                                <option value="Roboto">Roboto</option>
+                                <option value="Open Sans">Open Sans</option>
+                                <option value="Lato">Lato</option>
+                                <option value="Montserrat">Montserrat</option>
+                                <option value="Raleway">Raleway</option>
+                                <option value="Poppins">Poppins</option>
+                                <option value="Ubuntu">Ubuntu</option>
+                                <option value="Nunito">Nunito</option>
+                                <option value="PT Sans">PT Sans</option>
+                                <option value="Work Sans">Work Sans</option>
+                                <option value="DM Sans">DM Sans</option>
+                                <option value="Source Sans Pro">Source Sans Pro</option>
+                                <option value="Archivo">Archivo</option>
+                                <option value="Space Grotesk">Space Grotesk</option>
+                                <option value="Playfair Display">Playfair Display</option>
+                                <option value="Merriweather">Merriweather</option>
+                                <option value="Crimson Text">Crimson Text</option>
+                                <option value="Libre Baskerville">Libre Baskerville</option>
+                                <option value="Bebas Neue">Bebas Neue</option>
+                                <option value="Anton">Anton</option>
+                                <option value="Oswald">Oswald</option>
+                            </select>
                         </div>
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <label class="text-sm text-gray-600">Bold</label>
-                                <div class="toggle-switch" id="descBold"></div>
+                        <div>
+                            <label class="text-xs sm:text-sm text-gray-600 mb-1 block">Size</label>
+                            <input type="range" id="descSize" min="10" max="100" value="32">
+                            <span id="descSizeValue" class="text-xs text-gray-500">32px</span>
+                        </div>
+                        <div>
+                            <label class="text-xs sm:text-sm text-gray-600 mb-1 block">Line Height</label>
+                            <input type="range" id="descLineHeight" min="0.8" max="2" step="0.1" value="1.2">
+                            <span id="descLineHeightValue" class="text-xs text-gray-500">1.2</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                            <div>
+                                <label class="text-xs sm:text-sm text-gray-600 mb-2 block">Color</label>
+                                <input type="color" id="descColor" value="#6b7280">
                             </div>
-                            <div class="flex items-center justify-between">
-                                <label class="text-sm text-gray-600">Italic</label>
-                                <div class="toggle-switch" id="descItalic"></div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <label class="text-sm text-gray-600">Wrap</label>
-                                <div class="toggle-switch active" id="descWrap"></div>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-xs sm:text-sm text-gray-600">Bold</label>
+                                    <div class="toggle-switch" id="descBold"></div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <label class="text-xs sm:text-sm text-gray-600">Italic</label>
+                                    <div class="toggle-switch" id="descItalic"></div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <label class="text-xs sm:text-sm text-gray-600">Wrap</label>
+                                    <div class="toggle-switch active" id="descWrap"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -280,31 +418,45 @@
             </div>
             
             <!-- Layout Settings -->
-            <div class="control-panel rounded-xl p-6 control-section">
-                <h3 class="font-bold text-gray-800 mb-4 text-lg">Layout</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-sm text-gray-600 mb-1 block">Gap Between Texts</label>
-                        <input type="range" id="textGap" min="0" max="100" value="30">
-                        <span id="gapValue" class="text-xs text-gray-500">30px</span>
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-600 mb-2 block">Background</label>
-                        <input type="color" id="bgColor" value="#ffffff" class="w-full">
+            <div class="control-panel rounded-lg sm:rounded-xl p-4 sm:p-6 control-section">
+                <div class="panel-header flex items-center justify-between" onclick="togglePanel(this)">
+                    <h3 class="font-bold text-gray-800 text-base sm:text-lg">Layout</h3>
+                    <svg class="chevron lg:hidden w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+                <div class="panel-content mt-3 sm:mt-4">
+                    <div class="space-y-3 sm:space-y-4">
+                        <div>
+                            <label class="text-xs sm:text-sm text-gray-600 mb-1 block">Gap Between Texts</label>
+                            <input type="range" id="textGap" min="0" max="100" value="30">
+                            <span id="gapValue" class="text-xs text-gray-500">30px</span>
+                        </div>
+                        <div>
+                            <label class="text-xs sm:text-sm text-gray-600 mb-2 block">Background</label>
+                            <input type="color" id="bgColor" value="#ffffff" class="w-full">
+                        </div>
                     </div>
                 </div>
             </div>
             
             <!-- Custom Font Settings -->
-            <div class="control-panel rounded-xl p-6 control-section">
-                <h3 class="font-bold text-gray-800 mb-4 text-lg">Custom Google Font</h3>
-                <div class="space-y-3">
-                    <input type="text" id="customFontInput" placeholder="Enter font name (e.g., Bungee Shade)" 
-                           class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition text-sm">
-                    <button id="loadCustomFont" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-indigo-700 transition">
-                        Load Font
-                    </button>
-                    <p class="text-xs text-gray-500">Enter any Google Font name to add it to the dropdowns</p>
+            <div class="control-panel rounded-lg sm:rounded-xl p-4 sm:p-6 control-section">
+                <div class="panel-header flex items-center justify-between" onclick="togglePanel(this)">
+                    <h3 class="font-bold text-gray-800 text-base sm:text-lg">Custom Google Font</h3>
+                    <svg class="chevron lg:hidden w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+                <div class="panel-content mt-3 sm:mt-4">
+                    <div class="space-y-2 sm:space-y-3">
+                        <input type="text" id="customFontInput" placeholder="Enter font name (e.g., Bungee Shade)" 
+                               class="w-full px-3 sm:px-4 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition text-xs sm:text-sm">
+                        <button id="loadCustomFont" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-indigo-700 transition active:scale-95 text-sm sm:text-base">
+                            Load Font
+                        </button>
+                        <p class="text-xs text-gray-500">Enter any Google Font name to add it to the dropdowns</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -312,6 +464,86 @@
 </div>
 
 <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Mobile tab functionality
+    function initMobileTabs() {
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const canvasSection = document.getElementById('canvas-section');
+        const controlsSection = document.getElementById('controls-section');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tab = e.target.getAttribute('data-tab');
+                
+                // Update button states
+                tabBtns.forEach(b => {
+                    b.classList.remove('active', 'bg-white/20');
+                    b.classList.add('text-white/70');
+                });
+                e.target.classList.add('active', 'bg-white/20');
+                e.target.classList.remove('text-white/70');
+                
+                // Show/hide sections on mobile
+                if (window.innerWidth < 1024) {
+                    if (tab === 'canvas') {
+                        canvasSection.style.display = 'block';
+                        controlsSection.style.display = 'none';
+                    } else {
+                        canvasSection.style.display = 'none';
+                        controlsSection.style.display = 'block';
+                    }
+                }
+            });
+        });
+        
+        // Reset on resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                canvasSection.style.display = 'block';
+                controlsSection.style.display = 'block';
+            } else {
+                // Check active tab
+                const activeTab = document.querySelector('.tab-btn.active');
+                if (activeTab) {
+                    const tab = activeTab.getAttribute('data-tab');
+                    if (tab === 'canvas') {
+                        canvasSection.style.display = 'block';
+                        controlsSection.style.display = 'none';
+                    } else {
+                        canvasSection.style.display = 'none';
+                        controlsSection.style.display = 'block';
+                    }
+                }
+            }
+        });
+    }
+    
+    // Panel toggle functionality
+    function togglePanel(header) {
+        if (window.innerWidth >= 1024) return; // Only on mobile/tablet
+        
+        const panel = header.parentElement;
+        const content = panel.querySelector('.panel-content');
+        const chevron = header.querySelector('.chevron');
+        
+        if (content.classList.contains('active')) {
+            content.classList.remove('active');
+            chevron.classList.remove('rotate');
+        } else {
+            content.classList.add('active');
+            chevron.classList.add('rotate');
+        }
+    }
+    
+    // Initialize mobile features
+    initMobileTabs();
+    
+    // Set initial state for mobile
+    if (window.innerWidth < 1024) {
+        document.getElementById('controls-section').style.display = 'none';
+    }
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     
@@ -500,11 +732,25 @@
     // Custom font loading
     document.getElementById('loadCustomFont').addEventListener('click', () => {
         const fontName = document.getElementById('customFontInput').value.trim();
-        if (!fontName) return;
+        if (!fontName) {
+            // Show error feedback
+            const input = document.getElementById('customFontInput');
+            input.classList.add('border-red-500');
+            setTimeout(() => {
+                input.classList.remove('border-red-500');
+            }, 1500);
+            return;
+        }
         
         // Format font name for Google Fonts URL
         const formattedName = fontName.replace(/ /g, '+');
         const fontUrl = `https://fonts.googleapis.com/css2?family=${formattedName}:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap`;
+        
+        // Show loading state
+        const button = document.getElementById('loadCustomFont');
+        const originalText = button.textContent;
+        button.textContent = 'Loading...';
+        button.disabled = true;
         
         // Create and append link element
         const link = document.createElement('link');
@@ -531,29 +777,48 @@
                 document.getElementById('customFontInput').value = '';
                 
                 // Visual feedback
-                const button = document.getElementById('loadCustomFont');
-                const originalText = button.textContent;
-                button.textContent = 'Font Loaded!';
+                button.textContent = '✓ Font Loaded!';
                 button.classList.add('bg-green-600', 'hover:bg-green-700');
                 button.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
                 
                 setTimeout(() => {
                     button.textContent = originalText;
+                    button.disabled = false;
                     button.classList.remove('bg-green-600', 'hover:bg-green-700');
                     button.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
                 }, 2000);
             } else {
-                alert('This font is already loaded!');
+                button.textContent = 'Already Loaded';
+                button.classList.add('bg-orange-600', 'hover:bg-orange-700');
+                button.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                    button.classList.remove('bg-orange-600', 'hover:bg-orange-700');
+                    button.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+                }, 2000);
             }
-        }, 500);
+        }, 800);
     });
     
     // Allow pressing Enter to load custom font
     document.getElementById('customFontInput').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
+            e.preventDefault();
             document.getElementById('loadCustomFont').click();
         }
     });
+    
+    // Mobile viewport height fix
+    function setViewportHeight() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    
+    setViewportHeight();
+    window.addEventListener('resize', setViewportHeight);
+    window.addEventListener('orientationchange', setViewportHeight);
     
     // Responsive canvas
     function resizeCanvas() {
@@ -561,9 +826,38 @@
         const containerWidth = container.clientWidth;
         canvas.style.width = containerWidth + 'px';
         canvas.style.height = (containerWidth * 9 / 16) + 'px';
+        
+        // Trigger render on resize to ensure canvas looks correct
+        if (typeof renderCanvas === 'function') {
+            renderCanvas();
+        }
     }
     
-    window.addEventListener('resize', resizeCanvas);
+    // Debounced resize handler
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            resizeCanvas();
+        }, 250);
+    });
+    
+    // Touch event improvements for mobile
+    document.addEventListener('touchstart', function(e) {
+        if (e.target.type === 'range') {
+            e.stopPropagation();
+        }
+    }, { passive: true });
+    
+    // Prevent double-tap zoom on buttons
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function(e) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+            e.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
     
     // Initial render
     resizeCanvas();
